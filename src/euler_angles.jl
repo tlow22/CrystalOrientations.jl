@@ -7,6 +7,9 @@
     References:
     1) http://pajarito.materials.cmu.edu/rollett/27750/L2-Components_EulerAngles-19Jan16.pptx
 
+    TODO: functions for EulerAngle conventions other than Bunge
+          (currently not in need, implement according to future need)
+
 ===============================================================================#
 """
 Euler Angle interface conventions for crystal orientation

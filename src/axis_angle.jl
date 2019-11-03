@@ -10,6 +10,8 @@ struct AxisAngle <: AbstractOrientation
   angle::Float64
 end
 
-
+"""
+Access functions
+"""
 axis(axle::AxisAngle)  = axle.axis
 angle(axle::AxisAngle) = axle.angle
