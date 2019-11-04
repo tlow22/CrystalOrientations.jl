@@ -14,20 +14,37 @@
   and contains the following representations of orientations and conversions
   between them:
     • EulerAngles (Bunge, Kocks, Matthies, Roe)
-    • AxisAngle
+    • RotationMatrix
     • Quaternion
-    • RodriguesVec (i.e. Rodrigues Vector)
-    • HomochorVec  (i.e. Homochoric Vector)
+    • AxisAngle
+    • RodriguesFrank (i.e. Rodrigues-Frank Vector)
+    • Homochoric     (i.e. Homochoric Vector)
 ===============================================================================#
 module MicrostructureOrientation
-  using Reexport
-  @reexport using Quaternions
+  # using Reexport
+  # @reexport using Quaternions
+
+  import Base: getindex
+
+  export
+    Orientation,
+    AbstractOrientation,
+
+    # euler angles
+    EulerAngles,
+    AbstractEulerAngles,
+    Bunge,
+    Kocks,
+    Matthies,
+    Roe
+
 
   include("orientation_interface.jl")
   include("euler_angles.jl")
-  include("axis_angle.jl")
-  include("rodrigues_vector.jl")
-  include("homochoric_vector.jl")
-  include("conversions.jl")
+  # include("rotation_matrix.jl")
+  # include("axis_angle.jl")
+  # include("rodrigues_vector.jl")
+  # include("homochoric_vector.jl")
+  # include("conversions.jl")
 
 end #module

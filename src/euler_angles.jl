@@ -22,15 +22,8 @@ struct Roe      <: AbstractEulerAngles end
 
 struct EulerAngles{P} <: AbstractOrientation where P<:AbstractEulerAngles
     data::Tuple{Float64, Float64, Float64}
+    properties::P
 end
-
-"""
-Default constructor: EulerAngles{Bunge}
-"""
-@inline function EulerAngles(ϕ₁::Float64, Φ::Float64, ϕ₂::Float64)
-  return EulerAngles{Bunge}(Tuple(ϕ₁, Φ, ϕ₂))
-end
-
 
 """
 Constructor for EulerAngles with different conventions available (as-spelled):
@@ -43,13 +36,21 @@ Constructor for EulerAngles with different conventions available (as-spelled):
                              θ₁::Float64,
                              θ₂::Float64,
                              θ₃::Float64) where P<:AbstractEulerAngles
-    return EulerAngles{P}(Tuple(θ₁, θ₂, θ₃))
+  return EulerAngles{P}( (θ₁, θ₂, θ₃), P() )
 end
 
 
 """
-EulerAngles access/operator definitions
+Simplified constructor defaults to EulerAngles{Bunge}
 """
-@inline function ([])(euls::EulerAngles{P}, idx::Int) where P<:AbstractEulerAngles
-    return euls.data[idx]
+@inline function EulerAngles(ϕ₁::Float64, Φ::Float64, ϕ₂::Float64)
+  return EulerAngles(Bunge, ϕ₁, Φ, ϕ₂)
+end
+
+
+"""
+EulerAngles access operator
+"""
+@inline function getindex(euls::EulerAngles{P}, i::Int) where P<:AbstractEulerAngles
+  return euls.data[i]
 end
