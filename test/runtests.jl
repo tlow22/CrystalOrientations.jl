@@ -8,3 +8,4 @@
 using MicrostructureOrientation, Test
 
 include("euler_angles_test.jl")
+include("rotation_matrix_test.jl")

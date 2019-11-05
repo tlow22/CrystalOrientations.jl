@@ -21,12 +21,13 @@
     • Homochoric     (i.e. Homochoric Vector)
 ===============================================================================#
 module MicrostructureOrientation
-  # using Reexport
+  using Reexport
   # @reexport using Quaternions
-
-  import Base: getindex
+  @reexport using LinearAlgebra
+  import Base: getindex, one, *, inv, adjoint
 
   export
+    # orientation interface
     Orientation,
     AbstractOrientation,
 
@@ -36,12 +37,17 @@ module MicrostructureOrientation
     Bunge,
     Kocks,
     Matthies,
-    Roe
+    Roe,
+
+    # rotation matrix
+    RotationMatrix,
+    one
+
 
 
   include("orientation_interface.jl")
   include("euler_angles.jl")
-  # include("rotation_matrix.jl")
+  include("rotation_matrix.jl")
   # include("axis_angle.jl")
   # include("rodrigues_vector.jl")
   # include("homochoric_vector.jl")
