@@ -40,8 +40,7 @@ module MicrostructureOrientation
     Roe,
 
     # rotation matrix
-    RotationMatrix,
-    one
+    RotationMatrix
 
 
 
