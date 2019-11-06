@@ -26,12 +26,32 @@ const AxisOrientations = Union{RodriguesFrank, HomochoricVector, AxisAngle}
 
 
 """
-Access functions
+Returns axis vector for any AxisOrientation type
 """
 @inline function axis(orientation::P) where P<:AxisOrientations
-  return orientatino.axis
+  return orientation.axis
 end
 
+"""
+Returns rotation angle about an axis vector for any AxisOrientation type
+"""
 @inline function angle(orientation::P) where P<:AxisOrientations
-  return orientatino.angle
+  return orientation.angle
+end
+
+
+"""
+Returns axis vector for Orientation interface of type AxisOrientation
+"""
+@inline function axis(ort::Orientation{P}) where P<:AxisOrientations
+  return axis(ort.data)
+end
+
+
+"""
+Returns rotation angle about an axis vector for Orientation interface of type
+AxisOrientation
+"""
+@inline function angle(ort::Orientation{P}) where P<:AxisOrientations
+  return angle(ort.data)
 end

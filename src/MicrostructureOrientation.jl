@@ -24,7 +24,7 @@ module MicrostructureOrientation
   using Reexport
   # @reexport using Quaternions
   @reexport using LinearAlgebra
-  import Base: getindex, one, *, inv, adjoint
+  import Base: getindex, one, *, inv, adjoint, angle
 
   export
     # orientation interface
@@ -40,14 +40,22 @@ module MicrostructureOrientation
     Roe,
 
     # rotation matrix
-    RotationMatrix
+    RotationMatrix,
+
+    # axis angle types
+    AxisAngle,
+    RodriguesFrank,
+    HomochoricVector,
+    axis,
+    angle
+
 
 
 
   include("orientation_interface.jl")
   include("euler_angles.jl")
   include("rotation_matrix.jl")
-  # include("axis_angle.jl")
+  include("axis_angle_types.jl")
   # include("rodrigues_vector.jl")
   # include("homochoric_vector.jl")
   # include("conversions.jl")
