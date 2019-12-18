@@ -39,9 +39,6 @@ module MicrostructureOrientation
     Matthies,
     Roe,
 
-    # rotation matrix
-    RotationMatrix,
-
     # axis angle types
     AxisAngle,
     RodriguesFrank,
@@ -49,15 +46,10 @@ module MicrostructureOrientation
     axis,
     angle
 
-
-
-
+    # src files
   include("orientation_interface.jl")
   include("euler_angles.jl")
-  include("rotation_matrix.jl")
   include("axis_angle_types.jl")
-  # include("rodrigues_vector.jl")
-  # include("homochoric_vector.jl")
   # include("conversions.jl")
 
 end #module
