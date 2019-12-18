@@ -20,9 +20,9 @@ struct Kocks    <: AbstractEulerAngles end
 struct Matthies <: AbstractEulerAngles end
 struct Roe      <: AbstractEulerAngles end
 
-struct EulerAngles{P} <: AbstractOrientation where P<:AbstractEulerAngles
-    data::Tuple{Float64, Float64, Float64}
-    properties::P
+struct EulerAngles{E<:AbstractEulerAngles,T} <: AbstractOrientation
+  data::NTuple{3,T}
+  properties::E
 end
 
 """
@@ -32,25 +32,20 @@ Constructor for EulerAngles with different conventions available (as-spelled):
     • Kocks     (Ψ, Θ, ϕ)
     • Matthies  (α, β, γ)
 """
-@inline function EulerAngles(::Type{P},
-                             θ₁::Float64,
-                             θ₂::Float64,
-                             θ₃::Float64) where P<:AbstractEulerAngles
-  return EulerAngles{P}( (θ₁, θ₂, θ₃), P() )
+@inline function EulerAngles(::Type{E}, θ₂::T, θ₁::T, θ₃::T) where
+                             {E<:AbstractEulerAngles, T}
+  return EulerAngles{E,T}( (θ₁, θ₂, θ₃), P() )
 end
 
 
 """
-Simplified constructor defaults to EulerAngles{Bunge}
+Default constructor: Bunge convention
 """
-@inline function EulerAngles(ϕ₁::Float64, Φ::Float64, ϕ₂::Float64)
-  return EulerAngles(Bunge, ϕ₁, Φ, ϕ₂)
-end
+EulerAngles(ϕ₁::T, Φ::T, ϕ₂::T) where T = EulerAngles(Bunge, ϕ₁, Φ, ϕ₂)
 
 
+
 """
-EulerAngles access operator
+Extend Base functionality to EulerAngles
 """
-@inline function getindex(euls::EulerAngles{P}, i::Int) where P<:AbstractEulerAngles
-  return euls.data[i]
-end
+getindex(euls::EulerAngles, i) = euls.data[i]
