@@ -9,6 +9,6 @@ Orientation interface
 """
 abstract type AbstractOrientation end
 
-struct Orientation{P<:AbstractOrientation}
+struct Orientation{T, P<:AbstractOrientation}
   data::P
 end
