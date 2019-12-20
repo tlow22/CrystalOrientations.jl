@@ -17,4 +17,6 @@ end
 Extend Base functionality
 """
 getindex(rot::RotationMatrix, i, j) = getindex(rot.data, i, j)
+tr(rot::RotationMatrix)  = tr(rot.data)
+det(rot::RotationMatrix) = det(rot.data)
 (*)(rot::RotationMatrix, array) = rot.data * array
