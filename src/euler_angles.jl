@@ -14,16 +14,17 @@
 """
 Euler Angle interface conventions for crystal orientation
 """
-abstract type AbstractEulerAngles <: AbstractOrientation end
+abstract type AbstractEulerAngles end
 struct Bunge    <: AbstractEulerAngles end
 struct Kocks    <: AbstractEulerAngles end
 struct Matthies <: AbstractEulerAngles end
 struct Roe      <: AbstractEulerAngles end
 
-struct EulerAngles{E<:AbstractEulerAngles,T} <: AbstractOrientation
+struct EulerAngles{T,E<:AbstractEulerAngles} <: AbstractOrientation
   data::NTuple{3,T}
   properties::E
 end
+
 
 """
 Constructor for EulerAngles with different conventions available (as-spelled):
@@ -32,17 +33,15 @@ Constructor for EulerAngles with different conventions available (as-spelled):
     • Kocks     (Ψ, Θ, ϕ)
     • Matthies  (α, β, γ)
 """
-@inline function EulerAngles(::Type{E}, θ₂::T, θ₁::T, θ₃::T) where
-                             {E<:AbstractEulerAngles, T}
-  return EulerAngles{E,T}( (θ₁, θ₂, θ₃), P() )
+function EulerAngles(::Type{E}, θ₁::T, θ₂::T, θ₃::T) where {E<:AbstractEulerAngles, T}
+  return EulerAngles{T,E}( (θ₁, θ₂, θ₃), E() )
 end
 
+function EulerAngles(T, ::Type{E}, θ₁, θ₂, θ₃) where E<:AbstractEulerAngles
+  return EulerAngles{T,E}( (T(θ₁), T(θ₂), T(θ₃)), E() )
+end
 
-"""
-Default constructor: Bunge convention
-"""
 EulerAngles(ϕ₁::T, Φ::T, ϕ₂::T) where T = EulerAngles(Bunge, ϕ₁, Φ, ϕ₂)
-
 
 
 """
