@@ -178,4 +178,32 @@ function AxisAngle(::Type{AxisAng}, ort::EulerAngle{T,Bunge}) where T
   return AxisAngle{T,AxisAng}(axis, angle)
 end
 
-function AxisAngle(::Type{AxisAng}, ort::)
+function AxisAngle(::Type{AxisAng}, ort::AxisAngle{T, RodriguesFrank}) where T
+  ρ = norm(axis(ort))
+  ω = 2*atan(ρ)
+  n̂ = axis(ort)./ρ
+  return AxisAngle{T,AxisAng}(n̂, ω)
+end
+
+function AxisAngle(::Type{AxisAng}, ort::Quaternion{T}) where T
+  q₀ = ort.s
+  q₁ = ort.v1
+  q₂ = ort.v2
+  q₃ = ort.v3
+
+  ω = 2*acos(q₀)
+
+  if ω ≈ 0
+    n̂ = (0, 0, 1)
+  else
+    if q₀ ≈ 0
+      n̂ = (q₁, q₂, q₃)
+      ω = π
+    else
+      s = sign(q₀)/sqrt(q₁*q₁ + q₂*q₂ + q₃*q₃)
+      n̂ = (s*q₁, s*q₂, s*q₃)
+    end
+  end
+
+  return AxisAngle{AxisAng}(n̂, ω)
+end
