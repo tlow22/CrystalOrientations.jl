@@ -11,7 +11,7 @@ Convert <:AbstractOrientation → Quaternion{T}
 """
 Quaternion(quat::Quaternion) = quat
 
-function Quaternion(euls::EulerAngles{T, Bunge})
+function Quaternion(euls::EulerAngles{T, Bunge}) where T
   ϕ₁ = euls[1]
   Φ  = euls[2]
   ϕ₂ = euls[3]
@@ -51,13 +51,12 @@ function Quaternion(rot::RotationMatrix{T}) where T
   return normalize(Quaternion{T}(q₀, q₁, q₂, q₃))
 end
 
-
-function Quaternion(ort::AxisAngle{AxisAng})
-  θ = 0.5 * angle(ort)
+function Quaternion(ort::AxisAngle{T, AxisAng})
+  θ = angle(ort)/2
   s = sin(θ)
   c = cos(θ)
   n̂ = axis(ort)
-  return Quaternion([c, n̂[1]*s, n̂[2]*s, n̂[3]*s])
+  return Quaternion{T}([c, n̂[1]*s, n̂[2]*s, n̂[3]*s])
 end
 
 
