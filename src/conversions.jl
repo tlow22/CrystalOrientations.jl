@@ -4,7 +4,7 @@
   @author Thaddeus Low <thaddeuslow@outlook.com>
   @date 11/01/2019
 ===============================================================================#
-const P = -1.0                                                                  # Sign convention used (-ve)
+const P = -1                                                                  # Sign convention used (-ve)
 
 """
 Convert <:AbstractOrientation → Quaternion{T}
@@ -28,13 +28,12 @@ function Quaternion(euls::EulerAngles{T, Bunge})
                         -sgn*P*c*sin(σ) )
 end
 
-
-function Quaternion(rot::RotationMatrix)
+function Quaternion(rot::RotationMatrix{T}) where T
   # compute quaternion components
-  q₀ = 0.5 * sqrt(1.0 + rot[1,1] + rot[2,2] + rot[3,3])
-  q₁ = 0.5 * P * sqrt(1.0 + rot[1,1] - rot[2,2] - rot[3,3])
-  q₂ = 0.5 * P * sqrt(1.0 - rot[1,1] + rot[2,2] - rot[3,3])
-  q₃ = 0.5 * P * sqrt(1.0 - rot[1,1] - rot[2,2] + rot[3,3])
+  q₀ = 1/2 * sqrt(1 + rot[1,1] + rot[2,2] + rot[3,3])
+  q₁ = P/2 * sqrt(1 + rot[1,1] - rot[2,2] - rot[3,3])
+  q₂ = P/2 * sqrt(1 - rot[1,1] + rot[2,2] - rot[3,3])
+  q₃ = P/2 * sqrt(1 - rot[1,1] - rot[2,2] + rot[3,3])
 
   # modify component signs if necessary
   if rot[3,2] < rot[2,3]
@@ -49,7 +48,7 @@ function Quaternion(rot::RotationMatrix)
     q₃ = -q₃
   end
 
-  return normalize(Quaternion(q₀, q₁, q₂, q₃))
+  return normalize(Quaternion{T}(q₀, q₁, q₂, q₃))
 end
 
 
