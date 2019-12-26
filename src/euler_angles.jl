@@ -37,6 +37,9 @@ function EulerAngles(::Type{E}, θ₁::T, θ₂::T, θ₃::T) where {E<:Abstract
   return EulerAngles{T,E}( (θ₁, θ₂, θ₃), E() )
 end
 
+"""
+Convenience constructors
+"""
 function EulerAngles(T, ::Type{E}, θ₁, θ₂, θ₃) where E<:AbstractEulerAngles
   return EulerAngles{T,E}( (T(θ₁), T(θ₂), T(θ₃)), E() )
 end
