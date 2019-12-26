@@ -16,7 +16,10 @@ end
 """
 Extend Base functionality
 """
+iterate(rot::RotationMatrix, i) = iterate(rot.data, i)
 getindex(rot::RotationMatrix, i, j) = getindex(rot.data, i, j)
 tr(rot::RotationMatrix)  = tr(rot.data)
 det(rot::RotationMatrix) = det(rot.data)
+adjoint(rot::RotationMatrix) = adjoint(rot.data)
+inv(rot::RotationMatrix) = inv(rot.data)
 (*)(rot::RotationMatrix, array) = rot.data * array
