@@ -9,12 +9,10 @@ const P = -1                                                                  # 
 """
 Convert <:AbstractOrientation → Quaternion{T}
 """
-Quaternion(quat::Quaternion) = quat
-
-function Quaternion(euls::EulerAngles{T, Bunge}) where T
-  ϕ₁ = euls[1]
-  Φ  = euls[2]
-  ϕ₂ = euls[3]
+function Quaternion(ort::EulerAngles{T, Bunge}) where T
+  ϕ₁ = ort[1]
+  Φ  = ort[2]
+  ϕ₂ = ort[3]
 
   σ = (ϕ₁ + ϕ₂)/2
   δ = (ϕ₁ - ϕ₂)/2
@@ -61,17 +59,13 @@ end
 
 
 """
-Convert <:AbstractOrientation → EulerAngles
+Convert <:AbstractOrientation → EulerAngles{Bunge}
 """
-function EulerAngles(::Type{E}, α::RotationMatrix{T}) where
-                     {E<:AbstractEulerAngles, T}
-
-  if abs(α[3,3]) == 1.0
-    𝜭 = EulerAngles{T,Bunge}(atan(α[1,2], α[1,1]),
-                             0.5*π*(1.0 - α[3,3]),
-                             0.0)
+function EulerAngles(::Type{Bunge}, α::RotationMatrix{T}) where T
+  if abs(α[3,3]) == 1
+    𝜭 = EulerAngles{T,Bunge}(atan(α[1,2], α[1,1]), π/2*(1 - α[3,3]), 0)
   else
-    ζ = 1/sqrt(1-α[3,3]^2)
+    ζ = 1/sqrt(1-α[3,3]*α[3,3])
     𝜭 = EulerAngles{T,Bunge}(atan(α[3,1]*ζ, -α[3,2]*ζ),
                              acos(α[3,3]),
                              atan(α[1,3]*ζ, α[2,3]*ζ) )
@@ -80,27 +74,26 @@ function EulerAngles(::Type{E}, α::RotationMatrix{T}) where
   return 𝜭
 end
 
-function EulerAngles(::Type{E}, q::Quaternion{T}) where
-                     {E<:AbstractEulerAngles, T}
+function EulerAngles(::Type{Bunge}, q::Quaternion{T}) where T
   s  = q.s
   v₁ = q.v1
   v₂ = q.v2
   v₃ = q.v3
 
-  s₃ = s^2 + v₃^2
-  v₁₂ = v₁^2 + v₂^2
+  s₃ = s*s + v₃v₃
+  v₁₂ = v₁*v₁ + v₂*v₂
   χ   = √(s₃*v₁₂)
 
   if χ == 0
-      if v₁₂ == 0
-          𝚹 = EulerAngles{T,Bunge}(atan(-2*P*s*v₃, s^2-v₃^2), 0.0, 0.0)
-      elseif s₃ == 0
-          𝚹 = EulerAngles{T,Bunge}(atan(2*v₁*v₂, v₁^2-v₂^2), π, 0.0)
-      end
+    if v₁₂ == 0
+      𝚹 = EulerAngles{T,Bunge}(atan(-2*P*s*v₃, s*s-v₃*v₃), 0, 0)
+    elseif s₃ == 0
+      𝚹 = EulerAngles{T,Bunge}(atan(2*v₁*v₂, v₁*v₁-v₂*v₂), π, 0)
+    end
   else
-      𝚹 = EulerAngles{Bunge}(atan((v₁*v₃ - P*s*v2)/χ, (-P*s*v₁ - v2*v₃)/χ),
-                             atan(2*χ, s₃-v₁₂),
-                             atan( (P*s*v2 + v₁*v₃)/χ, (v2*v₃ - P*s*v₁)/χ ))
+    𝚹 = EulerAngles{Bunge}(atan((v₁*v₃ - P*s*v2)/χ, (-P*s*v₁ - v2*v₃)/χ),
+                           atan(2*χ, s₃-v₁₂),
+                           atan( (P*s*v2 + v₁*v₃)/χ, (v2*v₃ - P*s*v₁)/χ ))
   end
 
   return 𝚹
@@ -110,17 +103,17 @@ end
 """
 Convert <:AbstractOrientation → RotationMatrix
 """
-function RotationMatrix(eul::EulerAngle{T,Bunge}) where T
-  c₁ = cos(eul[1])
-  c  = cos(eul[2])
-  c₂ = cos(eul[3])
-  s₁ = sin(eul[1])
-  s  = sin(eul[2])
-  s₂ = sin(eul[3])
+function RotationMatrix(ort::EulerAngles{T,Bunge}) where T
+  c₁ = cos(ort[1])
+  c  = cos(ort[2])
+  c₂ = cos(ort[3])
+  s₁ = sin(ort[1])
+  s  = sin(ort[2])
+  s₂ = sin(ort[3])
 
-  return RotationMatrix(SMatrix{3,3,T}(c₁*c₂ - s₁*c*s₂, -c₁*s₂ - s₁*c*c₂,  s₁*s,
-                                       s₁*c₂ + c₁*c*s₂, -s₁*s₂ - c₁*c*c₂, -c₁*s,
-                                       s*s₂,             s*c₂,          ,  c))
+  return RotationMatrix(SMatrix{3,3,T}(c₁*c₂-s₁*c*s₂, -c₁*s₂-s₁*c*c₂,  s₁*s,
+                                       s₁*c₂+c₁*c*s₂, -s₁*s₂-c₁*c*c₂, -c₁*s,
+                                       s*s₂,             s*c₂,         c))
 end
 
 function RotationMatrix(ort::AxisAngle{T, AxisAng}) where T
@@ -159,7 +152,7 @@ end
 """
 Convert <:AbstractOrientation → AxisAngle{AxisAng}
 """
-function AxisAngle(::Type{AxisAng}, ort::EulerAngle{T,Bunge}) where T
+function AxisAngle(::Type{AxisAng}, ort::EulerAngles{T,Bunge}) where T
   (ϕ₁, Φ, ϕ₂) = ort.data
   t = tan(Φ/2)
   σ = (ϕ₁+ϕ₂)/2
