@@ -23,6 +23,14 @@ struct AxisAngle{T,A<:AbstractAxisAngle} <: AbstractOrientation
   properties::A
 end
 
+
+"""
+Convenience constructor(s)
+"""
+function AxisAngle(::Type{A}, n::NTuple{3,T}, θ::T) where {A,T}
+  return AxisAngle{T,A}(n, θ, A())
+end
+
 """
 Returns axis vector for any AxisOrientation type
 """
