@@ -17,7 +17,7 @@ struct AxisAng <: AbstractAxisAngle end
 struct RodriguesFrank <: AbstractAxisAngle end
 struct HomochoricVector <: AbstractAxisAngle end
 
-struct AxisAngle{T,A<:AbstractAxisAngle} <: AbstractOrientation
+struct AxisAngle{T,A<:AbstractAxisAngle}
   axis::NTuple{3,T}
   angle::T
   properties::A

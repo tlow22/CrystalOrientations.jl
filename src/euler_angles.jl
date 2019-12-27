@@ -20,7 +20,7 @@ struct Kocks    <: AbstractEulerAngles end
 struct Matthies <: AbstractEulerAngles end
 struct Roe      <: AbstractEulerAngles end
 
-struct EulerAngles{T,E<:AbstractEulerAngles} <: AbstractOrientation
+struct EulerAngles{T,E<:AbstractEulerAngles}
   data::NTuple{3,T}
   properties::E
 end
