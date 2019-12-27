@@ -28,33 +28,42 @@ module MicrostructureOrientation
   import Base: *, getindex, inv, adjoint, iterate, angle
 
   export
-    # orientation interface
-    Orientation,
-    AbstractOrientation,
-
+    # Euler angles representations
     EulerAngles,
-    AbstractEulerAngles, Bunge, Kocks, Matthies, Roe,
+    AbstractEulerAngles,
+    Bunge,
+    Kocks,
+    Matthies,
+    Roe,
 
+    # Axis angle type representations
     AxisAngle,
-    AbstractAxisAngle, AxisAng, RodriguesFrank, HomochoricVector,
+    AbstractAxisAngle,
+    AxisAng,
+    RodriguesFrank,
+    HomochoricVector,
     axis,
 
+    # Rotation matrix representation
     RotationMatrix,
     tr,
     det,
 
+    # Quaternion representation
     Quaternion,
-    normalize
+    normalize,
 
-
-
+    # Orientation interface
+    Orientation,
+    AbstractOrientation
 
 
     # src files
-  include("orientation_interface.jl")
   include("euler_angles.jl")
   include("rotation_matrix.jl")
   include("axis_angles.jl")
   include("conversions.jl")
+  include("orientation_interface.jl")
+
 
 end #module
