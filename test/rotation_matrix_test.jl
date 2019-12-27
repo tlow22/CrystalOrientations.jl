@@ -1,15 +1,14 @@
 @testset "rotation_matrix" begin
 
-  matrix = rand(3,3)
-  vector = rand(3)
-  rotMat = RotationMatrix(matrix)
-  rotI   = one(RotationMatrix)
-  @test rotI.data == Matrix{Float64}(I,3,3)
-  @test inv(rotMat).data == inv(matrix)
-  @test rotMat'.data == matrix'
-  @test rotMat * vector == matrix * vector
+  euls = EulerAngles(0.5π, 1.0π, 0.0)
+  rot  = RotationMatrix(euls)
 
-  for j=1:3, i=1:3
-    @test matrix[i,j] == rotMat[i,j]
-  end
+  # test adjoint and inverse functionality
+  @test rot' == rot.data'
+  @test inv(rot) == inv(rot.data)
+  @test rot' ≈ inv(rot)
+
+  # test determinant and trace functionality
+  @test det(rot) ≈ 1
+  @test tr(rot) ≈ -1
 end
