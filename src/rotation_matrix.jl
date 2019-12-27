@@ -6,7 +6,7 @@
 ===============================================================================#
 """
   RotationMatrix{T}
-  Container for a 3D rotation matrix (3x3)
+Container for a 3D rotation matrix (3x3)
 """
 struct RotationMatrix{T}
   data::SMatrix{3,3,T}
