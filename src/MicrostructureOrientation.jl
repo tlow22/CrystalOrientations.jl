@@ -21,35 +21,40 @@
     • Homochoric     (i.e. Homochoric Vector)
 ===============================================================================#
 module MicrostructureOrientation
-  using Reexport
-  # @reexport using Quaternions
-  @reexport using LinearAlgebra
-  import Base: getindex, one, *, inv, adjoint, angle
+
+  import StaticArrays: SMatrix
+  import Quaternions: Quaternion, normalize
+  import LinearAlgebra: tr, det
+  import Base: *, getindex, inv, adjoint, iterate, angle
 
   export
     # orientation interface
     Orientation,
     AbstractOrientation,
 
-    # euler angles
     EulerAngles,
-    AbstractEulerAngles,
-    Bunge,
-    Kocks,
-    Matthies,
-    Roe,
+    AbstractEulerAngles, Bunge, Kocks, Matthies, Roe,
 
-    # axis angle types
     AxisAngle,
-    RodriguesFrank,
-    HomochoricVector,
+    AbstractAxisAngle, AxisAng, RodriguesFrank, HomochoricVector,
     axis,
-    angle
+
+    RotationMatrix,
+    tr,
+    det,
+
+    Quaternion,
+    normalize
+
+
+
+
 
     # src files
   include("orientation_interface.jl")
   include("euler_angles.jl")
-  include("axis_angle_types.jl")
-  # include("conversions.jl")
+  include("rotation_matrix.jl")
+  include("axis_angles.jl")
+  include("conversions.jl")
 
 end #module
