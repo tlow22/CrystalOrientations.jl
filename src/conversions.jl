@@ -4,7 +4,7 @@
   @author Thaddeus Low <thaddeuslow@outlook.com>
   @date 11/01/2019
 ===============================================================================#
-const P = -1                                                                  # Sign convention used (-ve)
+const P = -1                                                                    # Sign convention used (-ve)
 
 """
 Convert <:AbstractOrientation → Quaternion{T}
