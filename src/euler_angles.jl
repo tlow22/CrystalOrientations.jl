@@ -12,7 +12,10 @@
 
 ===============================================================================#
 """
-Euler Angle interface conventions for crystal orientation
+    AbstractEulerAngles
+
+Abstract supertype for all EulerAngle representations of microstructural
+orientation common to metallurgists.
 """
 abstract type AbstractEulerAngles end
 struct Bunge    <: AbstractEulerAngles end
@@ -20,34 +23,31 @@ struct Kocks    <: AbstractEulerAngles end
 struct Matthies <: AbstractEulerAngles end
 struct Roe      <: AbstractEulerAngles end
 
-struct EulerAngles{T,E<:AbstractEulerAngles}
-  data::NTuple{3,T}
-  properties::E
-end
-
-
 """
-Constructor for EulerAngles with different conventions available (as-spelled):
+    EulerAngles{E<:AbstractEulerAngles, T<:AbstractFloat}
+
+An interface for different Euler angles conventions, implemented
+subtypes of AbstractEulerAngles include:
     • Bunge     (ϕ₁, Φ, ϕ₂)
     • Roe       (Ψ, Θ, Φ)
     • Kocks     (Ψ, Θ, ϕ)
     • Matthies  (α, β, γ)
 """
-function EulerAngles(::Type{E}, θ₁::T, θ₂::T, θ₃::T) where {E<:AbstractEulerAngles, T}
-  return EulerAngles{T,E}( (θ₁, θ₂, θ₃), E() )
+struct EulerAngles{E<:AbstractEulerAngles, T<:AbstractFloat}
+    data::NTuple{3,T}
+
+    function EulerAngles(::Type{E}, θ₁::T, θ₂::T, θ₃::T) where
+                        {E<:AbstractEulerAngles, T<:AbstractFloat}
+        return new{E,T}((θ₁, θ₂, θ₃))
+    end
 end
 
-"""
-Convenience constructors
-"""
+## Convenience constructors
 function EulerAngles(T, ::Type{E}, θ₁, θ₂, θ₃) where E<:AbstractEulerAngles
-  return EulerAngles{T,E}( (T(θ₁), T(θ₂), T(θ₃)), E() )
+    return EulerAngles{E,T}( (T(θ₁), T(θ₂), T(θ₃)), E() )
 end
 
-EulerAngles(ϕ₁::T, Φ::T, ϕ₂::T) where T = EulerAngles(Bunge, ϕ₁, Φ, ϕ₂)
+EulerAngles(ϕ₁::T, Φ::T, ϕ₂::T) where {T} = EulerAngles(Bunge, ϕ₁, Φ, ϕ₂)
 
-
-"""
-Extend Base functionality to EulerAngles
-"""
-getindex(euls::EulerAngles, i) = euls.data[i]
+## Extend Base functionality
+Base.getindex(euls::EulerAngles, i) = euls.data[i]
