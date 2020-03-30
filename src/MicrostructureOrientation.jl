@@ -14,7 +14,6 @@
   and contains the following representations of orientations and conversions
   between them:
     • EulerAngles (Bunge, Kocks, Matthies, Roe)
-    • RotationMatrix
     • Quaternion
     • AxisAngle
     • RodriguesFrank (i.e. Rodrigues-Frank Vector)
