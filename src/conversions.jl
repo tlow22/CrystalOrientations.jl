@@ -23,10 +23,10 @@ function Quaternion(ort::EulerAngles{Bunge, T}) where {T}
     s = sin(Φ/2)
 
     sgn = sign(c*cos(σ))
-    return  Quaternion{T}( sgn*c*cos(σ),
-                          -sgn*P*s*cos(δ),
-                          -sgn*P*s*sin(δ),
-                          -sgn*P*c*sin(σ) )
+    return  normalize(Quaternion( sgn*c*cos(σ),
+                                 -sgn*P*s*cos(δ),
+                                 -sgn*P*s*sin(δ),
+                                 -sgn*P*c*sin(σ) ))
 end
 
 """
@@ -54,7 +54,7 @@ function Quaternion(rot::AbstractArray{T,2}) where {T}
         q₃ = -q₃
     end
 
-    return normalize(Quaternion{T}(q₀, q₁, q₂, q₃))
+    return normalize(Quaternion(q₀, q₁, q₂, q₃))
 end
 
 """
@@ -67,48 +67,54 @@ function Quaternion(ort::AxisAngle{AxisAng, T}) where {T}
   s = sin(θ)
   c = cos(θ)
   n̂ = ort.axis
-  return Quaternion{T}([c, n̂[1]*s, n̂[2]*s, n̂[3]*s])
+  return normalize(Quaternion([c, n̂[1]*s, n̂[2]*s, n̂[3]*s]))
 end
 
 ## orientation → EulerAngles converters
 """
-    EulerAngles(rotation_matrix)
+    EulerAngles(T, rotation_matrix)
 
-Converts 3x3 rotation matrix → EulerAngles{Bunge}
+Converts 3x3 rotation matrix → EulerAngles{T}
 """
 function EulerAngles(::Type{Bunge}, α::AbstractArray{T,2}) where {T}
   if abs(α[3,3]) == 1
-    𝜭 = EulerAngles{Bunge,T}(atan(α[1,2], α[1,1]), π/2*(1 - α[3,3]), 0)
+    𝜭 = EulerAngles(Bunge, atan(α[1,2], α[1,1]), π/2*(1 - α[3,3]), 0)
   else
     ζ = 1/sqrt(1-α[3,3]*α[3,3])
-    𝜭 = EulerAngles{Bunge,T}(atan(α[3,1]*ζ, -α[3,2]*ζ),
-                             acos(α[3,3]),
-                             atan(α[1,3]*ζ, α[2,3]*ζ) )
+    𝜭 = EulerAngles(Bunge, atan(α[3,1]*ζ, -α[3,2]*ζ),
+                           acos(α[3,3]),
+                           atan(α[1,3]*ζ, α[2,3]*ζ) )
   end
 
   return 𝜭
 end
 
-function EulerAngles(::Type{Bunge}, q::Quaternion{T}) where {T}
-    s  = q.s
-    v₁ = q.v1
-    v₂ = q.v2
-    v₃ = q.v3
+"""
+    EulerAngles(T, quaternion)
 
-    s₃ = s*s + v₃v₃
-    v₁₂ = v₁*v₁ + v₂*v₂
-    χ   = √(s₃*v₁₂)
+Converts quaternion → EulerAngles{T}
+"""
+function EulerAngles(::Type{Bunge}, q::Quaternion{T}) where {T}
+    q₀ = q.s
+    q₁ = q.v1
+    q₂ = q.v2
+    q₃ = q.v3
+
+    q₀₃ = q₀*q₀ + q₃*q₃
+    q₁₂ = q₁*q₁ + q₂*q₂
+    χ   = √(q₀₃*q₁₂)
 
     if χ == 0
-        if v₁₂ == 0
-            𝚹 = EulerAngles{Bunge,T}(atan(-2*P*s*v₃, s*s-v₃*v₃), 0, 0)
-        elseif s₃ == 0
-            𝚹 = EulerAngles{Bunge,T}(atan(2*v₁*v₂, v₁*v₁-v₂*v₂), π, 0)
+        if q₁₂ == 0
+            𝚹 = EulerAngles(Bunge, atan(-2*P*q₀*q₃, q₀*q₀-q₃*q₃), 0, 0)
+        elseif q₀₃ == 0
+            𝚹 = EulerAngles(Bunge, atan(2*q₁*q₂, q₁*q₁-q₂*q₂), π, 0)
         end
     else
-      𝚹 = EulerAngles{Bunge}(atan((v₁*v₃ - P*s*v2)/χ, (-P*s*v₁ - v2*v₃)/χ),
-                           atan(2*χ, s₃-v₁₂),
-                           atan( (P*s*v2 + v₁*v₃)/χ, (v2*v₃ - P*s*v₁)/χ ))
+      𝚹 = EulerAngles(Bunge,
+                      atan((q₁*q₃ - P*q₀*q₂)/χ, (-P*q₀*q₁ - q₂*q₃)/χ),
+                      atan(2χ, q₀₃-q₁₂),
+                      atan( (P*q₀*q₂ + q₁*q₃)/χ, (q₂*q₃ - P*q₀*q₁)/χ ))
     end
 
   return 𝚹
@@ -159,7 +165,7 @@ end
 Converts Quaternion representation → 3x3 rotation matrix
 """
 function rotation_matrix(ort::Quaternion{T}) where {T}
-    q = normalize(ort)
+    q  = normalize(ort)
     q₀ = q.s
     q₁ = q.v1
     q₂ = q.v2
@@ -171,13 +177,14 @@ function rotation_matrix(ort::Quaternion{T}) where {T}
                           2(q₁*q₃ + P*q₀*q₂),  2(q₂*q₃ - P*q₀*q₁),   q̄ + 2*q₃*q₃)
 end
 
+## orientation → axis-angle-pair converterss
 
 """
     AxisAngle(AxisAng, euler_angle)
 
 Converts EulerAngle → AxisAngle{AxisAng}
 """
-function AxisAngle(::Type{AxisAng}, ort::EulerAngles{Bunge,T}) where {T}
+function AxisAngle(::Type{AxisAng}, ort::EulerAngles{Bunge})
     (ϕ₁, Φ, ϕ₂) = ort.data
     t = tan(Φ/2)
     σ = (ϕ₁+ϕ₂)/2
@@ -193,7 +200,29 @@ function AxisAngle(::Type{AxisAng}, ort::EulerAngles{Bunge,T}) where {T}
         α    = 2π-α
     end
 
-    return AxisAngle{T,AxisAng}(axis, angle)
+    return AxisAngle(AxisAng, axis, α)
+end
+
+"""
+    AxisAngle(T, rotation_matrix)
+
+Converts 3x3 rotation matrix → EulerAngles{T}
+"""
+function AxisAngle(::Type{AxisAng}, ort::AbstractArray{T,2}) where {T}
+    ω = acos((tr(ort)-1)/2)
+
+    if ω ≈ 0
+        n̂ ≈ (T(0), T(0), T(1))
+    else
+        i = findfirst(eigvals(ort).==1)
+        n̂ = eigvecs(ort)[:,i]
+        rot[3,2] == rot[2,3] ? nothing : n̂[1] *= sign( P*(rot[3,2] - rot[2,3])
+        rot[1,3] == rot[3,1] ? nothing : n̂[2] *= sign( P*(rot[3,2] - rot[2,3])
+        rot[2,1] == rot[1,2] ? nothing : n̂[3] *= sign( P*(rot[3,2] - rot[2,3])
+        n̂ = Tuple(n̂)
+    end
+
+    return AxisAngle(AxisAng, n̂, ω)
 end
 
 """
@@ -201,11 +230,11 @@ end
 
 Converts RodriguesFrank vector → AxisAngle{AxisAng}
 """
-function AxisAngle(::Type{AxisAng}, ort::AxisAngle{RodriguesFrank,T}) where {T}
+function AxisAngle(::Type{AxisAng}, ort::AxisAngle{RodriguesFrank})
     ρ = norm(ort.axis)
     ω = 2*atan(ρ)
     n̂ = ort.axis./ρ
-    return AxisAngle{T,AxisAng}(n̂, ω)
+    return AxisAngle(AxisAng, n̂, ω)
 end
 
 """
@@ -225,12 +254,12 @@ function AxisAngle(::Type{AxisAng}, ort::Quaternion{T}) where {T}
     else
         if q₀ ≈ 0
             n̂ = (q₁, q₂, q₃)
-            ω = π
+            ω = T(π)
         else
             s = sign(q₀)/sqrt(q₁*q₁ + q₂*q₂ + q₃*q₃)
             n̂ = (s*q₁, s*q₂, s*q₃)
         end
     end
 
-    return AxisAngle{AxisAng}(n̂, ω)
+    return AxisAngle(AxisAng, n̂, ω)
 end
