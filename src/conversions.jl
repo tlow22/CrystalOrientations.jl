@@ -76,7 +76,7 @@ end
 
 Converts 3x3 rotation matrix → EulerAngles{Bunge}
 """
-function EulerAngles(::Type{Bunge}, α::RotationMatrix{T}) where {T}
+function EulerAngles(::Type{Bunge}, α::AbstractArray{T,2}) where {T}
   if abs(α[3,3]) == 1
     𝜭 = EulerAngles{Bunge,T}(atan(α[1,2], α[1,1]), π/2*(1 - α[3,3]), 0)
   else
@@ -130,7 +130,7 @@ function rotation_matrix(ort::EulerAngles{Bunge,T}) where {T}
 
     return SMatrix{3,3,T}(c₁*c₂-s₁*c*s₂, -c₁*s₂-s₁*c*c₂,  s₁*s,
                           s₁*c₂+c₁*c*s₂, -s₁*s₂-c₁*c*c₂, -c₁*s,
-                          s*s₂,             s*c₂,         c))
+                          s*s₂,             s*c₂,         c)
 end
 
 """
@@ -150,7 +150,7 @@ function rotation_matrix(ort::AxisAngle{AxisAng, T}) where {T}
 
     return SMatrix{3,3,T}(c + (1-c)*n₁*n₁, (1-c)*n₁₂ - s*n₃, (1-c)*n₁₃ + s*n₂,
                           (1-c)*n₁₂ + s*n₃, c + (1-c)*n₂*n₂, (1-c)*n₂₃ - s*n₁,
-                          (1-c)*n₁₃ - s*n₂, (1-c)*n₂₃ + s*n₁, c + (1-c)*n₃*n₃) )
+                          (1-c)*n₁₃ - s*n₂, (1-c)*n₂₃ + s*n₁, c + (1-c)*n₃*n₃)
 end
 
 """
@@ -168,7 +168,7 @@ function rotation_matrix(ort::Quaternion{T}) where {T}
 
     return SMatrix{3,3,T}(q̄ + 2*q₁*q₁,  2(q₁*q₂ + P*q₀*q₃),   2(q₁*q₃ - P*q₀*q₂),
                           2(q₁*q₂ - P*q₀*q₃),         q̄ + 2*q₂*q₂,   2(q₂*q₃ + P*q₀*q₁),
-                          2(q₁*q₃ + P*q₀*q₂),  2(q₂*q₃ - P*q₀*q₁),   q̄ + 2*q₃*q₃) ))
+                          2(q₁*q₃ + P*q₀*q₂),  2(q₂*q₃ - P*q₀*q₁),   q̄ + 2*q₃*q₃)
 end
 
 
