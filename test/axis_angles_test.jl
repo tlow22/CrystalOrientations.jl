@@ -1,14 +1,14 @@
 @testset "axis_angle_types" begin
-  # test all axis angle type orientations
-  n̂ = (1.0, 0.0, 0.0)
-  θ = 1π
-  ort1 = AxisAngle(AxisAng, n̂, θ)
-  ort2 = AxisAngle(RodriguesFrank, n̂, θ)
-  ort3 = AxisAngle(HomochoricVector, n̂, θ)
-  Ω    = [ort1 ort2 ort3]
+    # test constructors
+    n̂  = (1.0, 0.0, 0.0)
+    θ  = π
+    Ω₁ = AxisAngle(AxisAng, n̂, θ)
+    Ω₂ = AxisAngle(RodriguesFrank, n̂, θ)
+    Ω₃ = AxisAngle(HomochoricVector, n̂, θ)
+    Ω  = [Ω₁, Ω₂, Ω₃]
 
-  for ort in Ω
-    @test axis(ort) == n̂
-    @test angle(ort) == θ
-  end
+    for ort in Ω
+        @test ort.axis  == n̂
+        @test ort.angle == θ
+    end
 end

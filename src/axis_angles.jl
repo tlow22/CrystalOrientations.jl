@@ -10,29 +10,31 @@
   3) HomochoricVector
 ===============================================================================#
 """
-Axis angle type orientation structures
+    AbstractAxisAngle
+
+Abstract supertype for all axis-angle representations of microstructural
+orientation common to metallurgists.
 """
-abstract type AbstractAxisAngle end
-struct AxisAng <: AbstractAxisAngle end
-struct RodriguesFrank <: AbstractAxisAngle end
+struct AxisAng          <: AbstractAxisAngle end
+struct RodriguesFrank   <: AbstractAxisAngle end
 struct HomochoricVector <: AbstractAxisAngle end
 
-struct AxisAngle{T,A<:AbstractAxisAngle}
-  axis::NTuple{3,T}
-  angle::T
-  properties::A
+
+"""
+    EulerAngles{E<:AbstractEulerAngles, T<:AbstractFloat}
+
+An interface for different Euler angles conventions, implemented
+subtypes of AbstractEulerAngles include:
+    • Bunge     (ϕ₁, Φ, ϕ₂)
+    • Roe       (Ψ, Θ, Φ)
+    • Kocks     (Ψ, Θ, ϕ)
+    • Matthies  (α, β, γ)
+"""
+struct AxisAngle{A<:AbstractAxisAngle, T<:AbstractFloat}
+    axis::NTuple{3,T}
+    angle::T
+
+    function AxisAngle(::Type{A}, n::NTuple{3,T}, θ::T) where {A,T}
+      return new{A,T}(n, θ)
+    end
 end
-
-
-"""
-Convenience constructor(s)
-"""
-function AxisAngle(::Type{A}, n::NTuple{3,T}, θ::T) where {A,T}
-  return AxisAngle{T,A}(n, θ, A())
-end
-
-"""
-Returns axis vector for any AxisOrientation type
-"""
-axis(ort::P) where P<:AxisAngle = ort.axis
-angle(ort::P) where P<:AxisAngle = ort.angle

@@ -17,7 +17,6 @@
 Abstract supertype for all EulerAngle representations of microstructural
 orientation common to metallurgists.
 """
-abstract type AbstractEulerAngles end
 struct Bunge    <: AbstractEulerAngles end
 struct Kocks    <: AbstractEulerAngles end
 struct Matthies <: AbstractEulerAngles end
@@ -49,5 +48,17 @@ end
 
 EulerAngles(ϕ₁::T, Φ::T, ϕ₂::T) where {T} = EulerAngles(Bunge, ϕ₁, Φ, ϕ₂)
 
+
 ## Extend Base functionality
 Base.getindex(euls::EulerAngles, i) = euls.data[i]
+Base.isapprox(𝛉₁::EulerAngles{E1}, 𝛉₂::EulerAngles{E2}) where {E1,E2} =
+    (E1 == E2) && all(𝛉₁.data .≈ 𝛉₂.data)
+
+Base.isapprox(𝛉₁::EulerAngles{E}, 𝛉₂::EulerAngles{E}) where {E} =
+    all(𝛉₁.data .≈ 𝛉₂.data)
+
+Base.isequal(𝛉₁::EulerAngles{E1}, 𝛉₂::EulerAngles{E2}) where {E1,E2}=
+    all(𝛉₁.data .== 𝛉₂.data) && (E1 == E2)
+
+Base.isequal(𝛉₁::EulerAngles{E}, 𝛉₂::EulerAngles{E}) where {E}=
+    all(𝛉₁.data .== 𝛉₂.data)
