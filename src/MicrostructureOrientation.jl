@@ -22,48 +22,36 @@
 ===============================================================================#
 module MicrostructureOrientation
 
-  import StaticArrays: SMatrix
-  import Quaternions: Quaternion, normalize
-  import LinearAlgebra: tr, det
-  import Base: *, getindex, inv, adjoint, iterate, angle
+    import StaticArrays: SMatrix
+    import Quaternions: Quaternion, normalize
 
-  export
-    # Euler angles representations
-    EulerAngles,
-    AbstractEulerAngles,
-    Bunge,
-    Kocks,
-    Matthies,
-    Roe,
+    export
+        # 3rd party re-exports
+        Quaternion,
+        normalize,
 
-    # Axis angle type representations
-    AxisAngle,
-    AbstractAxisAngle,
-    AxisAng,
-    RodriguesFrank,
-    HomochoricVector,
-    axis,
+        # interfaces.jl
+        AbstractOrientation,
+        AbstractEulerAngles,
+        AbstractAxisAngle,
 
-    # Rotation matrix representation
-    RotationMatrix,
-    tr,
-    det,
+        # euler_angles.jl
+        EulerAngles,
+        Bunge,
+        Kocks,
+        Matthies,
+        Roe,
 
-    # Quaternion representation
-    Quaternion,
-    normalize,
-
-    # Orientation interface
-    Orientation,
-    AbstractOrientation
-
+        # axis_angles.jl
+        AxisAngle,
+        AxisAng,
+        RodriguesFrank,
+        HomochoricVector,
+        axis
 
     # src files
-  include("euler_angles.jl")
-  include("rotation_matrix.jl")
-  include("axis_angles.jl")
-  include("conversions.jl")
-  include("orientation_interface.jl")
-
-
+    include("interface.jl")
+    include("euler_angles.jl")
+    include("axis_angles.jl")
+    include("conversions.jl")
 end #module
