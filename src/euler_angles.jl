@@ -34,19 +34,16 @@ subtypes of AbstractEulerAngles include:
 """
 struct EulerAngles{E<:AbstractEulerAngles, T<:AbstractFloat}
     data::NTuple{3,T}
-
-    function EulerAngles(::Type{E}, θ₁::T, θ₂::T, θ₃::T) where
-                        {E<:AbstractEulerAngles, T<:AbstractFloat}
-        return new{E,T}((θ₁, θ₂, θ₃))
-    end
 end
 
 ## Convenience constructors
-function EulerAngles(T, ::Type{E}, θ₁, θ₂, θ₃) where E<:AbstractEulerAngles
-    return EulerAngles{E,T}( (T(θ₁), T(θ₂), T(θ₃)), E() )
+function EulerAngles(::Type{E}, θ₁::Real, θ₂::Real, θ₃::Real) where
+                    {E<:AbstractEulerAngles, T<:AbstractFloat}
+    𝛉 = promote(θ₁, θ₂, θ₃)
+    return EulerAngles{E,eltype(𝛉)}(𝛉)
 end
 
-EulerAngles(ϕ₁::T, Φ::T, ϕ₂::T) where {T} = EulerAngles(Bunge, ϕ₁, Φ, ϕ₂)
+EulerAngles(ϕ₁::Real, Φ::Real, ϕ₂::Real) = EulerAngles(Bunge, ϕ₁, Φ, ϕ₂)
 
 
 ## Extend Base functionality
