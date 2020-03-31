@@ -42,17 +42,9 @@ function Quaternion(rot::AbstractArray{T,2}) where {T}
     q₃ = P/2 * sqrt(1 - rot[1,1] - rot[2,2] + rot[3,3])
 
     # modify component signs if necessary
-    if rot[3,2] < rot[2,3]
-        q₁ = -q₁
-    end
-
-    if rot[1,3] < rot[3,1]
-        q₂ = -q₂
-    end
-
-    if rot[2,1] < rot[1,2]
-        q₃ = -q₃
-    end
+    rot[3,2] < rot[2,3] ? q₁ = -q₁ : nothing
+    rot[1,3] < rot[3,1] ? q₂ = -q₂ : nothing
+    rot[2,1] < rot[1,2] ? q₃ = -q₃ : nothing
 
     return normalize(Quaternion(q₀, q₁, q₂, q₃))
 end
@@ -66,8 +58,8 @@ function Quaternion(ort::AxisAngle{AxisAng, T}) where {T}
   θ = ort.angle/2
   s = sin(θ)
   c = cos(θ)
-  n̂ = ort.axis
-  return normalize(Quaternion([c, n̂[1]*s, n̂[2]*s, n̂[3]*s]))
+  n̂ = ort.axis .* s
+  return normalize(Quaternion(c, n̂[1], n̂[2], n̂[3]))
 end
 
 ## orientation → EulerAngles converters
@@ -216,9 +208,9 @@ function AxisAngle(::Type{AxisAng}, ort::AbstractArray{T,2}) where {T}
     else
         i = findfirst(eigvals(ort).==1)
         n̂ = eigvecs(ort)[:,i]
-        rot[3,2] == rot[2,3] ? nothing : n̂[1] *= sign( P*(rot[3,2] - rot[2,3])
-        rot[1,3] == rot[3,1] ? nothing : n̂[2] *= sign( P*(rot[3,2] - rot[2,3])
-        rot[2,1] == rot[1,2] ? nothing : n̂[3] *= sign( P*(rot[3,2] - rot[2,3])
+        rot[3,2] == rot[2,3] ? nothing : n̂[1] *= sign( P*(rot[3,2] - rot[2,3]))
+        rot[1,3] == rot[3,1] ? nothing : n̂[2] *= sign( P*(rot[3,2] - rot[2,3]))
+        rot[2,1] == rot[1,2] ? nothing : n̂[3] *= sign( P*(rot[3,2] - rot[2,3]))
         n̂ = Tuple(n̂)
     end
 
