@@ -28,28 +28,40 @@ subtypes of AbstractAxisAngle include:
     • AxisAng
     • RodriguesFrank
     • HomochoricVector
-"""
-struct AxisAngle{A<:AbstractAxisAngle, T<:AbstractFloat}
-    axis::NTuple{3,T}
-    angle::T
 
-    function AxisAngle(::Type{A}, n::NTuple{3,T}, θ::T) where {A,T}
-      return new{A,T}(n, θ)
-    end
+The axis is a unit vector, and the angle in radians. 
+"""
+struct AxisAngle{A<:AbstractAxisAngle, T<:Real}
+    axis::Tuple{T, T, T}
+    angle::T
 end
+
+## Convenience constructors
+function AxisAngle(::Type{A}, axis::Tuple{T,T,T}, angle::T) where
+                   {A<:AbstractAxisAngle, T<:AbstractFloat}
+    return AxisAngle{A,T}(axis, angle)
+end
+
+function AxisAngle(::Type{A}, x::T, y::T, z::T, angle::T) where
+                   {A<:AbstractAxisAngle, T<:AbstractFloat}
+    norm = sqrt(x*x + y*y + z*z)
+    axis = (x/norm, y/norm, z/norm)
+    return AxisAngle{A,T}(axis, angle)
+end
+
+AxisAngle(::Type{A}, x::Real, y::Real, z::Real, θ::Real) where {A} =
+    AxisAngle(A, promote(x,y,z,θ)...)
 
 
 ## Extend Base functionality
-Base.getindex(euls::AxisAngle, i) = euls.data[i]
+Base.isapprox(a₁::AxisAngle{E1}, a₂::AxisAngle{E2}) where {E1,E2} =
+    E1 == E2 && all(a₁.axis .≈ a₂.axis) && a₁.angle ≈ a₂.angle
 
-Base.isapprox(𝛉₁::AxisAngle{E1}, 𝛉₂::AxisAngle{E2}) where {E1,E2} =
-    (E1 == E2) && all(𝛉₁.axis .≈ 𝛉₂.axis) && (𝛉₁.angle ≈ 𝛉₂.angle)
+Base.isapprox(a₁::AxisAngle{E}, a₂::AxisAngle{E}) where {E} =
+    all(a₁.axis .≈ a₂.axis) && a₁.angle ≈ a₂.angle
 
-Base.isapprox(𝛉₁::AxisAngle{E}, 𝛉₂::AxisAngle{E}) where {E} =
-    (𝛉₁.axis == 𝛉₂.axis) && (𝛉₁.angle == 𝛉₂.angle)
+Base.isequal(a₁::AxisAngle{E1}, a₂::AxisAngle{E2}) where {E1,E2} =
+    E1 == E2 && all(a₁.axis .== a₂.axis) && a₁.angle == a₂.angle
 
-Base.isequal(𝛉₁::AxisAngle{E1}, 𝛉₂::AxisAngle{E2}) where {E1,E2}=
-    (E1 == E2) && (𝛉₁.axis == 𝛉₂.axis) && (𝛉₁.angle == 𝛉₂.angle)
-
-Base.isequal(𝛉₁::AxisAngle{E}, 𝛉₂::AxisAngle{E}) where {E}=
-    (𝛉₁.axis == 𝛉₂.axis) && (𝛉₁.angle == 𝛉₂.angle)
+Base.isequal(a₁::AxisAngle{E}, a₂::AxisAngle{E}) where {E} =
+    all(a₁.axis .== a₂.axis) && a₁.angle == a₂.angle
