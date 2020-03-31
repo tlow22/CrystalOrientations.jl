@@ -1,4 +1,4 @@
-@testset "euler_angles" begin
+@testset "EulerAngles" begin
     data = (0.1*π, 0.5, 0.25*π)
     eul  = EulerAngles(data...)
 

@@ -1,4 +1,4 @@
-@testset "axis_angle_types" begin
+@testset "AxisAngles" begin
     # test constructors
     n̂  = (1.0, 0.0, 0.0)
     θ  = 1π
