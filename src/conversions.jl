@@ -86,7 +86,7 @@ end
 
 Converts quaternion → EulerAngles{T}
 """
-function EulerAngles(::Type{Bunge}, q::Quaternion{T}) where {T}
+function EulerAngles(::Type{Bunge}, q::Quaternion)
     q₀ = q.s
     q₁ = q.v1
     q₂ = q.v2
@@ -110,6 +110,17 @@ function EulerAngles(::Type{Bunge}, q::Quaternion{T}) where {T}
     end
 
   return 𝚹
+end
+
+"""
+    EulerAngles(E, axis_angle)
+
+Converts axis-angle pair → EulerAngles{T}
+"""
+function EulerAngles(::Type{E}, a::AxisAngle{AxisAng}) where
+                     {E<:AbstractEulerAngles}
+    q = Quaternion(a)
+    return EulerAngles(E, q)
 end
 
 ## orientation → 3x3 rotation matrix converters
@@ -200,17 +211,18 @@ end
 
 Converts 3x3 rotation matrix → EulerAngles{T}
 """
-function AxisAngle(::Type{AxisAng}, ort::AbstractArray{T,2}) where {T}
-    ω = acos((tr(ort)-1)/2)
+function AxisAngle(::Type{AxisAng}, α::AbstractArray{T,2}) where {T}
+    ω = acos((tr(α)-1)/2)
 
     if ω ≈ 0
-        n̂ ≈ (T(0), T(0), T(1))
+        n̂ = (T(0), T(0), T(1))
     else
-        i = findfirst(eigvals(ort).==1)
-        n̂ = eigvecs(ort)[:,i]
-        rot[3,2] == rot[2,3] ? nothing : n̂[1] *= sign( P*(rot[3,2] - rot[2,3]))
-        rot[1,3] == rot[3,1] ? nothing : n̂[2] *= sign( P*(rot[3,2] - rot[2,3]))
-        rot[2,1] == rot[1,2] ? nothing : n̂[3] *= sign( P*(rot[3,2] - rot[2,3]))
+        eigs = eigen(Array(α))
+        i    = findfirst(eigs.values .== 1)
+        n̂    = real(eigs.vectors[:,i])
+        α[3,2] == α[2,3] ? nothing : n̂[1] *= sign( P*(α[3,2] - α[2,3]))
+        α[1,3] == α[3,1] ? nothing : n̂[2] *= sign( P*(α[1,3] - α[3,1]))
+        α[2,1] == α[1,2] ? nothing : n̂[3] *= sign( P*(α[2,1] - α[1,2]))
         n̂ = Tuple(n̂)
     end
 

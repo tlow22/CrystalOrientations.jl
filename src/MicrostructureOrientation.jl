@@ -23,6 +23,7 @@ module MicrostructureOrientation
 
     import StaticArrays: SMatrix
     import Quaternions: Quaternion, normalize
+    import LinearAlgebra: tr, eigen
 
     export
         # 3rd party re-exports
@@ -46,7 +47,9 @@ module MicrostructureOrientation
         AxisAng,
         RodriguesFrank,
         HomochoricVector,
-        axis
+
+        # conversions.jl
+        rotation_matrix
 
     # src files
     include("interface.jl")
