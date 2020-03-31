@@ -12,6 +12,12 @@
         @test ort.angle == θ
     end
 
+    @test AxisAngle(AxisAng, n̂[1], n̂[2], n̂[3], θ) ==
+        AxisAngle{AxisAng, eltype(θ)}(n̂, θ)
+    @test AxisAngle(AxisAng, 1, 0, 0, 0.0) ==
+        AxisAngle(AxisAng, 1.0, 0.0, 0.0, 0.0)
+    @test AxisAngle{AxisAng, eltype(θ)}(n̂, θ) == Ω₁
+
     # test boolean comparison operators
     @test Ω₁ != Ω₂ != Ω₃
     @test Ω₁ == Ω₁
