@@ -1,4 +1,4 @@
-@testset "Orientation conversions" begin
+@testset "Conversions" begin
 
     θ = EulerAngles(Bunge, π/6, 0.0, 0.0)
     n = AxisAngle(AxisAng, (0.0,0.0,1.0), π/6)
