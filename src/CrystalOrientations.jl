@@ -1,7 +1,6 @@
 #===============================================================================
-  @file MicrostructureOrientation.jl
-  @brief MicrostructureOrientation module for describing crystallographic
-         orientation.
+  @file CrystalOrientations.jl
+  @brief Module for describing crystallographic orientation.
   @author Thaddeus low <thaddeuslow@outlook.com>
   @date 11/03/2019
 
@@ -19,7 +18,7 @@
     • RodriguesFrank (i.e. Rodrigues-Frank Vector)
     • Homochoric     (i.e. Homochoric Vector)
 ===============================================================================#
-module MicrostructureOrientation
+module CrystalOrientations
 
     import StaticArrays: SMatrix
     import Quaternions: Quaternion, normalize
