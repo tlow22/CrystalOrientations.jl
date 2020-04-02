@@ -138,7 +138,7 @@ function rotation_matrix(ort::EulerAngles{Bunge,T}) where {T}
     s₂ = sin(ort[3])
 
     return SMatrix{3,3,T}(c₁*c₂-s₁*c*s₂, -c₁*s₂-s₁*c*c₂,  s₁*s,
-                          s₁*c₂+c₁*c*s₂, -s₁*s₂-c₁*c*c₂, -c₁*s,
+                          s₁*c₂+c₁*c*s₂, -s₁*s₂+c₁*c*c₂, -c₁*s,
                           s*s₂,             s*c₂,         c)
 end
 
