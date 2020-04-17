@@ -5,6 +5,13 @@ A package for describing crystal orientations and transforming between their rep
 
 # Constructing Orientations 
 The package includes crystal orientation representations for: 
-i) 
+1. Euler Angles 
+   * Bunge
+2. Quaternions 
+3. Axis-Angle types
+   * Axis-Angle
+   * Rodrigues-Frank vector 
 
-`This is code`
+As an example, one can create an Euler Angles representation of the Bunge (ZXZ) convention via: 
+
+`euls = EulerAngles(Bunge, 0.0, 1.0, 0.3)`
